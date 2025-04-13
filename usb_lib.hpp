@@ -6,11 +6,9 @@
 #include "usb_device.h"
 #include "usbd_cdc_if.h"
 #include "soft_fifo.hpp"
-//#include <deque>
 
 
 namespace stmlib_v1{
-
 
 class usb_comm_it{
 private:
