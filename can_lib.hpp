@@ -18,8 +18,8 @@ class can_comm_it{
 
 private:
     CAN_HandleTypeDef *can;
-    SoftFifo<CanPacket, 8> tx_soft_fifo;
-    SoftFifo<CanPacket, 8> rx_soft_fifo;
+    SoftFifo<CanPacket, 6> tx_soft_fifo;
+    SoftFifo<CanPacket, 6> rx_soft_fifo;
 
 public:
     can_comm_it(CAN_HandleTypeDef* _can) : can(_can){
@@ -31,7 +31,7 @@ public:
     }
 
     void start();
-    void filter_set_free(uint32_t bank_number, bool is_ext_id);
+    void filter_set_free(uint32_t bank_number);
 
     size_t get_tx_busy_level();
     bool add_tx_fifo(CanPacket &packet);
@@ -51,7 +51,7 @@ void can_comm_it::start(){
     HAL_CAN_ActivateNotification(can, CAN_TX_MAILBOX2);
 }
 
-void can_comm_it::filter_set_free(uint32_t bank_number, bool is_ext_id){
+void can_comm_it::filter_set_free(uint32_t bank_number){
     CAN_FilterTypeDef filter;
 
     filter.FilterBank = bank_number;
