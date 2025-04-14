@@ -47,6 +47,10 @@ public:
         //nothing to do
     }
 
+    UART_HandleTypeDef* get_handle(){
+        return uart;
+    }
+
     void comm_start(){
         HAL_UART_Receive_IT(uart, &rx_buf, 1);
     }
