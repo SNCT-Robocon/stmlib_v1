@@ -28,7 +28,7 @@ public:
     }
 
     void angle_update_trigger(){
-        HAL_I2C_Mem_Read_IT(&hi2c1, 0x36 << 1, 0x0c, I2C_MEMADD_SIZE_8BIT, raw_angle_u8, 2);
+        HAL_I2C_Mem_Read_IT(i2c, 0x36 << 1, 0x0c, I2C_MEMADD_SIZE_8BIT, raw_angle_u8, 2);
     }
 
     void angle_update(){
