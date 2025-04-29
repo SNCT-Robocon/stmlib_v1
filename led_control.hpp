@@ -33,6 +33,23 @@ void led_control::change_state(){
     HAL_GPIO_TogglePin(gpio_port, gpio_pin);
 }
 
+class gpio_input{
+private:
+    GPIO_TypeDef* gpio_port;
+    const uint16_t gpio_pin;
+
+public:
+    gpio_input(GPIO_TypeDef* _gpio_port, const uint16_t _gpio_pin)
+        : gpio_port(_gpio_port), gpio_pin(_gpio_pin){
+        // nothing to do
+    }
+
+    bool get_state(){
+        return HAL_GPIO_ReadPin(gpio_port, gpio_pin);
+    }
+    
+};
+
 
 }
 
