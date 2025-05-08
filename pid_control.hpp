@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include <algorithm>
+#include <cmath>
 
 namespace stmlib_v1{
 
@@ -16,6 +17,7 @@ private:
     float diff_integ;
     float anti_windup_min;
     float anti_windup_max;
+    float i_reset_triger;
 
 public:
 
@@ -27,7 +29,8 @@ public:
         float _lim_min,
         float _lim_max,
         float _anti_windup_min,
-        float _anti_windup_max
+        float _anti_windup_max,
+        float _i_reset_triger
     ) : loop_hz(_loop_hz),
         gain_p(_gain_p),
         gain_i(_gain_i),
@@ -37,7 +40,8 @@ public:
         old_diff(0.0f),
         diff_integ(0.0f),
         anti_windup_min(_anti_windup_min),
-        anti_windup_max(_anti_windup_max)
+        anti_windup_max(_anti_windup_max),
+        i_reset_triger(_i_reset_triger)
     {
         // nothing to do
     }
@@ -47,6 +51,10 @@ public:
 
         diff_integ += (diff + old_diff) / 2.0000 / this -> loop_hz;
         diff_integ = std::clamp(diff_integ, anti_windup_min, anti_windup_max);
+
+        if(fabsf(diff) < i_reset_triger){
+            diff_integ = 0;
+        }
 
         output += diff * gain_p;
         output += (diff - old_diff) * this -> loop_hz * gain_d;
