@@ -174,9 +174,28 @@ public:
 
     }
 
-    float get_stick_data(size_t channel){
+    float get_stick_data(size_t axis){
 
-        float stick_data = (static_cast<float>(channel_data[channel]) - 992.0) / 820.0;
+        /*
+        channel 4 1022 1680
+        channel 3 1038 1680
+        channel 1 1019 1680
+        channel 2 1009 368
+        */
+        float stick_data = 0.0f;
+        
+        if(axis == 0){
+            stick_data = (static_cast<float>(channel_data[3]) - 1022.0) / (1680.0 - 1022.0);
+        }
+        else if(axis == 1){
+            stick_data = (static_cast<float>(channel_data[2]) - 1038.0) / (1680.0 - 1038.0);
+        }
+        else if(axis == 2){
+            stick_data = (static_cast<float>(channel_data[0]) - 1019.0) / (1680.0 - 1019.0);
+        }
+        else if(axis == 3){
+            stick_data = (static_cast<float>(channel_data[1]) - 1009.0) / (368.0 - 1009.0);
+        }
 
         if(stick_data < - 0.95){
             stick_data = - 1.0;
