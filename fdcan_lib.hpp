@@ -12,15 +12,15 @@ struct CanFdPacket{
     bool is_ext_id = false;
     bool is_remote_frame = false;
     size_t dlc;
-    uint8_t main_data[32];
+    uint8_t main_data[8];
 };
 
 class canfd_comm_it{
 
 private:
     FDCAN_HandleTypeDef *fdcan;
-    SoftFifo<CanFdPacket, 8> tx_soft_fifo;
-    SoftFifo<CanFdPacket, 8> rx_soft_fifo;
+    SoftFifo<CanFdPacket, 6> tx_soft_fifo;
+    SoftFifo<CanFdPacket, 6> rx_soft_fifo;
 
 public:
     canfd_comm_it(FDCAN_HandleTypeDef* _fdcan) : fdcan(_fdcan){
