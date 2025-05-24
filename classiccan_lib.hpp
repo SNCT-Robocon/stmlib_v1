@@ -1,28 +1,29 @@
-#ifndef FDCAN_LIB_HPP_
-#define FDCAN_LIB_HPP_
+#ifndef CLASSICCAN_LIB_HPP_
+#define CLASSICCAN_LIB_HPP_
 
 #include "main.h"
 #include "soft_fifo.hpp"
 
 namespace stmlib_v1{
 
-struct CanFdPacket{
+struct CanClassicPacket{
     uint32_t packet_id;
     bool is_ext_id = false;
     bool is_remote_frame = false;
     size_t dlc;
-    uint8_t main_data[32];
+    uint8_t main_data[8];
 };
 
-class canfd_comm_it{
+
+class can_classic_comm_it{
 
 private:
     FDCAN_HandleTypeDef *fdcan;
-    SoftFifo<CanFdPacket, 6> tx_soft_fifo;
-    SoftFifo<CanFdPacket, 6> rx_soft_fifo;
+    SoftFifo<CanClassicPacket, 6> tx_soft_fifo;
+    SoftFifo<CanClassicPacket, 6> rx_soft_fifo;
 
 public:
-    canfd_comm_it(FDCAN_HandleTypeDef* _fdcan) : fdcan(_fdcan){
+    can_classic_comm_it(FDCAN_HandleTypeDef* _fdcan) : fdcan(_fdcan){
         // nothing to do
     }
 
@@ -34,16 +35,16 @@ public:
     void filter_set_free(uint32_t bank_number, bool is_ext_id);
 
     size_t get_tx_busy_level();
-    bool add_tx_fifo(CanFdPacket &packet);
+    bool add_tx_fifo(CanClassicPacket &packet);
     void tx_trigger();
 
     size_t get_rx_busy_level();
     void rx_interruption();
-    bool rx(CanFdPacket &packet);
+    bool rx(CanClassicPacket &packet);
 
 };
 
-void canfd_comm_it::start(){
+void can_classic_comm_it::start(){
 
     HAL_FDCAN_Start(fdcan);
     HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0U);
@@ -53,7 +54,7 @@ void canfd_comm_it::start(){
 
 }
 
-void canfd_comm_it::filter_set_free(uint32_t bank_number, bool is_ext_id){
+void can_classic_comm_it::filter_set_free(uint32_t bank_number, bool is_ext_id){
     FDCAN_FilterTypeDef filter;
 
     filter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
@@ -66,31 +67,31 @@ void canfd_comm_it::filter_set_free(uint32_t bank_number, bool is_ext_id){
     HAL_FDCAN_ConfigFilter(fdcan, &filter);
 }
 
-size_t canfd_comm_it::get_tx_busy_level(){
+size_t can_classic_comm_it::get_tx_busy_level(){
     return tx_soft_fifo.get_busy_level();
 }
 
-bool canfd_comm_it::add_tx_fifo(CanFdPacket &packet){
+bool can_classic_comm_it::add_tx_fifo(CanClassicPacket &packet){
     bool is_ok;
     is_ok = tx_soft_fifo.input(packet);
     tx_trigger();
     return is_ok;
 }
 
-void canfd_comm_it::tx_trigger(){
+void can_classic_comm_it::tx_trigger(){
     if(get_tx_busy_level() == 0){
         // nothing to do
     }
     else{
-        CanFdPacket packet;
+        CanClassicPacket packet;
         FDCAN_TxHeaderTypeDef tx_header;
 
         tx_soft_fifo.output(packet);
 
-        tx_header.BitRateSwitch = FDCAN_BRS_ON;
+        tx_header.BitRateSwitch = FDCAN_BRS_OFF;
         tx_header.DataLength = packet.dlc;
         tx_header.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
-        tx_header.FDFormat = FDCAN_FD_CAN;
+        tx_header.FDFormat = FDCAN_CLASSIC_CAN;
         tx_header.Identifier = packet.packet_id;
         tx_header.IdType = packet.is_ext_id ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
         tx_header.MessageMarker = 0U;
@@ -101,13 +102,13 @@ void canfd_comm_it::tx_trigger(){
     }
 }
 
-size_t canfd_comm_it::get_rx_busy_level(){
+size_t can_classic_comm_it::get_rx_busy_level(){
     return rx_soft_fifo.get_busy_level();
 }
 
-void canfd_comm_it::rx_interruption(){
+void can_classic_comm_it::rx_interruption(){
     FDCAN_RxHeaderTypeDef rx_header;
-    CanFdPacket packet;
+    CanClassicPacket packet;
 
     HAL_FDCAN_GetRxMessage(fdcan, FDCAN_RX_FIFO0, &rx_header, packet.main_data);
 
@@ -119,11 +120,11 @@ void canfd_comm_it::rx_interruption(){
     rx_soft_fifo.input(packet);
 }
 
-bool canfd_comm_it::rx(CanFdPacket &packet){
+bool can_classic_comm_it::rx(CanClassicPacket &packet){
     return rx_soft_fifo.output(packet);
 }
 
 
 }
 
-#endif /* FDCAN_LIB_HPP_ */
+#endif /* CLASSICCAN_LIB_HPP_ */
