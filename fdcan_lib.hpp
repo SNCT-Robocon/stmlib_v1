@@ -10,7 +10,7 @@ struct CanFdPacket{
     uint32_t packet_id;
     bool is_ext_id = false;
     bool is_remote_frame = false;
-    size_t dlc;
+    uint32_t dlc;
     uint8_t main_data[32];
 };
 
@@ -88,7 +88,7 @@ void canfd_comm_it::tx_trigger(){
         tx_soft_fifo.output(packet);
 
         tx_header.BitRateSwitch = FDCAN_BRS_ON;
-        tx_header.DataLength = packet.dlc;
+        tx_header.DataLength = FDCAN_DLC_BYTES_32;
         tx_header.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
         tx_header.FDFormat = FDCAN_FD_CAN;
         tx_header.Identifier = packet.packet_id;
