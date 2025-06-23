@@ -70,7 +70,7 @@ public:
     }
 
     void tx_trigger(){
-        if (tx_soft_fifo.get_busy_level() != 0 && HAL_UART_GetState(uart) == HAL_UART_STATE_READY) {
+        if (tx_soft_fifo.get_busy_level() != 0 && uart -> gState == HAL_UART_STATE_READY){
             uint8_t tx_byte;
             tx_soft_fifo.output(tx_byte);
             HAL_UART_Transmit_IT(uart, &tx_byte, 1);
