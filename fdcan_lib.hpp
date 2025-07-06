@@ -33,6 +33,14 @@ public:
     void start();
     void filter_set_free(uint32_t bank_number, bool is_ext_id);
 
+    void bus_off_check(){
+        FDCAN_ProtocolStatusTypeDef protocolStatus = {};
+        HAL_FDCAN_GetProtocolStatus(fdcan, &protocolStatus);
+        if (protocolStatus.BusOff) {
+            CLEAR_BIT(fdcan->Instance->CCCR, FDCAN_CCCR_INIT);
+        }
+    }
+
     size_t get_tx_busy_level();
     bool add_tx_fifo(CanFdPacket &packet);
     void tx_trigger();
@@ -50,6 +58,7 @@ void canfd_comm_it::start(){
     HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER0);
     HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER1);
     HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER2);
+    HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_BUS_OFF, 0U);
 
 }
 
