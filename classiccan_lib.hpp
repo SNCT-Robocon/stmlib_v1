@@ -34,6 +34,15 @@ public:
     void start();
     void filter_set_free(uint32_t bank_number, bool is_ext_id);
 
+
+    void bus_off_check(){
+        FDCAN_ProtocolStatusTypeDef protocolStatus = {};
+        HAL_FDCAN_GetProtocolStatus(fdcan, &protocolStatus);
+        if (protocolStatus.BusOff) {
+            CLEAR_BIT(fdcan->Instance->CCCR, FDCAN_CCCR_INIT);
+        }
+    }
+
     size_t get_tx_busy_level();
     bool add_tx_fifo(CanClassicPacket &packet);
     void tx_trigger();
