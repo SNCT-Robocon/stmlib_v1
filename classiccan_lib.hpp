@@ -60,6 +60,7 @@ void can_classic_comm_it::start(){
     HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER0);
     HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER1);
     HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER2);
+    HAL_FDCAN_ActivateNotification(fdcan, FDCAN_IT_BUS_OFF, 0U);
 
 }
 
